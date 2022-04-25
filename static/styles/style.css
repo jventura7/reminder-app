@@ -1,0 +1,29 @@
+body {
+    background-color:lightsteelblue;
+}
+
+
+h1 {
+  color: navy;
+  margin-left: 0px;
+  
+}
+
+html * {
+  line-height: 1.625;
+  font-family: Georgia, serif;
+}
+h2 {
+  color: navy;
+  margin-left: 0px;
+}
+
+.center{
+  text-align: center;
+  color: navy
+}
+
+p.center{
+  text-align: center;
+  color: black
+}

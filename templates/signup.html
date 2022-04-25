@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %} Create Account Page {% endblock %}
+{% block content%}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p>{{msg}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+<form action="#" method="POST">
+    <p>First Name</p>
+    <p><input type="text", name="first_name"/></p>
+    <p>Last Name</p>
+    <p><input type="text", name="last_name"/></p>
+    <p>Username</p>
+    <p><input type="text", name="username"/></p>
+    <p>Email</p>
+    <p><input type="text", name="email"/></p>
+    <p>Password</p>
+    <p><input type="text", name="password"/></p>
+
+    <p><input type="submit", value="submit"/></p>
+    <br>
+    <p>Already have an account? Login</p>
+    <a href='login' class="button"> Login</a>
+</form>
+{% endblock %}
