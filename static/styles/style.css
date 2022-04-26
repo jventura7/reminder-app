@@ -1,10 +1,9 @@
 body {
-    background-color:lightsteelblue;
+    background-color:ivory;
 }
 
-
 h1 {
-  color: navy;
+  color: blue;
   margin-left: 0px;
   
 }
@@ -13,17 +12,56 @@ html * {
   line-height: 1.625;
   font-family: Georgia, serif;
 }
+
 h2 {
   color: navy;
   margin-left: 0px;
 }
 
 .center{
-  text-align: center;
-  color: navy
+  text-align: left;
+  color: navy;
 }
 
-p.center{
-  text-align: center;
-  color: black
+.container{
+  width:80%;
+  margin:auto;
+  overflow:hidden;
+}
+
+#navbar{
+  background-color:rgb(73, 73, 185);
+}
+
+#navbar ul{
+  padding:0;
+  list-style:none;  
+}
+
+#navbar li{
+  display:inline;
+}
+
+#navbar a{
+  color:white;
+  text-decoration:none;
+  font-size:18px;
+  padding-right:20px;
+}
+
+#left-view{
+  padding-right:40px;
+  width:50%;
+  margin-left:40px;
+}
+
+#main-footer{
+  background-color:whitesmoke;
+  text-align:center;
+  padding:2px;
+  margin-top:80px;
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:2.5rem;
 }
