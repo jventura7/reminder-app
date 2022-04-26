@@ -1,10 +1,10 @@
 /* HTML Tags */
 body {
-    background:linear-gradient(to right, #ff106f, #ffad06)
+    background:linear-gradient(to right, #0b9ad7, skyblue)
 }
 
 h1 {
-  color: #ff106f;
+  color: #0b9ad7;
   margin-left: 0px;
   
 }
@@ -15,20 +15,23 @@ html * {
 }
 
 h2 {
-  color: #ff106f;
+  color: #0b9ad7;
   margin-left: 0px;
 }
 
 input {
   border:none;
-  padding: 30px 25px;
+  display: block;
+  margin-left:auto;
+  margin-right:auto;
+  padding: 5px 5px;
   border-radius: 30px;
   box-shadow: -5px 5px 50px 0 #eaf0ee;
 }
 
 /* Classes */
 .center{
-  text-align: left;
+  text-align: center;
 }
 
 .container{
@@ -51,7 +54,7 @@ input {
 }
 
 .button{
-  background-color:#ff7c10;
+  background-color:#0b9ad7;
   padding:10px 15px;
   border:none;
   border-radius: 5px;
@@ -59,7 +62,7 @@ input {
 
 /* IDs */
 #navbar{
-  background: linear-gradient(to right, #ff106f, #ffad06);
+  background: linear-gradient(to right, #0b9ad7, skyblue);
 }
 
 #navbar ul{
@@ -86,18 +89,28 @@ input {
   border-radius:10px;
   margin-top:70px;
   margin-left:30px;
-  background:white;
+  background:snow;
 }
 
 #right-view{
   float:right;
   width:30%;
   padding:5px;
-  height:275px;
+  height:350px;
   margin:185px 150px 20px 50px;
   box-sizing:border-box;
   border-radius: 10px;
-  background:white;
+  background:snow;
+}
+
+#signup{
+  width:30%;
+  padding:5px;
+  margin-top:50px;
+  margin-right:35%;
+  margin-left:35%;
+  border-radius: 10px;
+  background:snow;
 }
 
 #home-login{
