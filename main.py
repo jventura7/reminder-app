@@ -25,7 +25,7 @@ def home():
        return "Invalid username/password combination"
     return render_template("index.html")
 
-@app.route("/<nameID>")
+@app.route("/<nameID>/<relationshipType>")
 def user(nameID, relationshipType):
     if relationshipType == "User":
         return f"Welcome User: {nameID}!"
