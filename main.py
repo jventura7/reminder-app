@@ -12,17 +12,17 @@ guardian = mongo.db.guardians
 @app.route("/", methods = ['POST', 'GET'])
 def home():
     if request.method == "POST":
-       login_user = users.find_one ({"username": request.form["logUsername"]})
-       login_guardian = guardian.find({"username": request.form["logUsername"]})
-       if login_user or login_guardian:
-           if login_user:
-               login = login_user
-           else:
-               login = login_guardian
-       if bcrypt.hashpw(request.form["logPassword"].encode("utf-8"), login["password"]) == login["password"]:
-            session["username"] = request.form["logUsername"]
-            return redirect(url_for("user", nameID=session["username"], relationshipType=login["relationship"]))
-       return "Invalid username/password combination"
+        login_user = users.find_one ({"username": request.form["username"]})
+        login_guardian = guardian.find({"username": request.form["username"]})
+        if login_user or login_guardian:
+            if login_user:
+                login = login_user
+            else:
+                login = login_guardian
+        if bcrypt.hashpw(request.form["password"].encode("utf-8"), login["password"]) == login["password"]:
+                session["username"] = request.form["username"]
+                return redirect(url_for("user", nameID=session["username"], relationshipType=login["relationship"]))
+        return "Invalid username/password combination"
     return render_template("index.html")
 
 @app.route("/<nameID>/<relationshipType>")
