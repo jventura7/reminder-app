@@ -27,10 +27,10 @@ def home():
 
 @app.route("/<nameID>/<relationshipType>")
 def user(nameID, relationshipType):
-    if relationshipType == "User":
-        return f"Welcome User: {nameID}!"
+    if relationshipType == "Dependant":
+        return render_template("dependant.html", username=nameID)
     else:
-        return f"Welcome Guardian: {nameID}"
+        return render_template("guardian.html", username=nameID)
 
 @app.route("/signup", methods = ['GET', 'POST'])
 def signup():
