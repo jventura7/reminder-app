@@ -1,89 +1,61 @@
+from unicodedata import name
 from flask import Flask, redirect, url_for, render_template, request, session, flash
 from datetime import timedelta
 from flask_pymongo import PyMongo
-
+import bcrypt
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/myDatabase"
-db = PyMongo(app).db
-app.secret_key = "key"
-app.permanent_session_lifetime = timedelta(minutes=10)
+app.config["MONGO_URI"] = "mongodb://localhost:27017/accounts"
 
-# class users(db.Model):
-    # _id = db.Column("id", db.Inteder, primary_key=True)
-    # name = db.Column(db.String(100))
-    # email = db.Column(db.String(100))
-
-    # def __init__(self, name, email):
-    #     self.name = name
-    #     self.email = email
-
-@app.route("/")
+mongo = PyMongo(app)
+users = mongo.db.users
+guardian = mongo.db.guardians
+@app.route("/", methods = ['POST', 'GET'])
 def home():
+    if request.method == "POST":
+       login_user = users.find_one ({"username": request.form["logUsername"]})
+       login_guardian = guardian.find({"username": request.form["logUsername"]})
+       if login_user or login_guardian:
+           if login_user:
+               login = login_user
+           else:
+               login = login_guardian
+       if bcrypt.hashpw(request.form["logPassword"].encode("utf-8"), login["password"]) == login["password"]:
+            session["username"] = request.form["logUsername"]
+            return redirect(url_for("user", nameID=session["username"], relationshipType=login["relationship"]))
+       return "Invalid username/password combination"
     return render_template("index.html")
 
-@app.route("/login", methods=["POST", "GET"])
-def login():
-    if request.method == "POST":
-        session.permanent = True
-        user = request.form["nm"]
-        session["user"] = user
-
-        """
-        found_user = users.query.filter_by(name=user).first()
-        if found_user:
-            session["email"] = found_user.email
-        else:
-            usr = users(user, "")
-            db.session.add(usr)
-            db.commit()
-        """
-
-        flash(f"Successfully logged in!", "info")
-        return redirect(url_for("user"))
+@app.route("/<nameID>")
+def user(nameID, relationshipType):
+    if relationshipType == "User":
+        return f"Welcome User: {nameID}!"
     else:
-        if "user" in session:
-            flash(f"Already logged in!", "info")
-            return redirect(url_for("user"))
-        return render_template("login.html")
+        return f"Welcome Guardian: {nameID}"
 
-@app.route("/signup", methods=["POST", "GET"])
+@app.route("/signup", methods = ['GET', 'POST'])
 def signup():
-    if request.method == "POST" and request.form["username"]:
-        session.pemanent = True
-        user = request.form["username"]
-        session["user"] = user
-        flash(f"Successfully created account!", "info")
-        return redirect(url_for("user"))
-    else:
-        return render_template("signup.html")
+    if request.method == "POST":
+        checkEmpty = not request.form["username"] or not request.form["last_name"] or not request.form["username"] or not request.form["email"] or not request.form["password"]
+        if checkEmpty:
+            return "Error: Submit all fields!"
+        existingUserName = users.find_one({"username" : request.form["username"]})
+        existingUserEmail = users.find_one({"email": request.form["email"]})
+        existingGuardianName = guardian.find_one({"username" : request.form["username"]})
+        existingGuardianEmail = guardian.find_one({"email": request.form["email"]})
 
-
-@app.route("/user", methods=["POST", "GET"])
-def user():
-    email = None
-    if "user" in session:
-        user = session["user"]
-        if request.method == "POST":
-            email = request.form["email"]
-            session["email"] = email
-            # found_user = users.query.filter_by(name=user).first()
-            # found_user.email = email 
-            # db.commit()
-            flash(f"Successful email!", "info")
-        else:
-            if "email" in session:
-                email = session["email"]
-        return render_template("user.html", email=email)
-    else:
-        return redirect(url_for("login"))
-
-@app.route("/logout")
-def logout():
-    flash(f"Logout successful", "info")
-    session.pop("user", None)
-    session.pop("email", None)
-    return redirect(url_for("login"))
+        if not existingUserName and not existingUserEmail and not existingGuardianName and not existingGuardianEmail:
+            hashpass = bcrypt.hashpw(request.form["password"].encode('utf-8'), bcrypt.gensalt())
+            currInfo = {"firstname": request.form["first_name"], "lastname": request.form["last_name"], "username": request.form["username"], "email": request.form["email"], "password" : hashpass, "relationship" : request.form["relationship"]}
+            if request.form["relationship"] == "Guardian":
+                guardian.insert_one(currInfo)
+            else:
+                users.insert_one(currInfo)
+            session["username"] = request.form["username"]
+            return redirect(url_for("user", nameID=session["username"], relationshipType=currInfo["relationship"]))
+        return "email or username is already registered"
+    return render_template("signup.html")
 
 if __name__ == "__main__":
     # db.create_all()
+    app.secret_key = "my_secret"
     app.run(debug=True)

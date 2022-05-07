@@ -6,7 +6,6 @@ body {
 h1 {
   color: #0b9ad7;
   margin-left: 0px;
-  
 }
 
 html * {
@@ -41,16 +40,30 @@ input {
 }
 
 .my-form{
-  padding:10px;
+  padding:10px
 }
 
 .my-form .form-group{
-  padding-bottom:15px;
+  padding:5px
 }
 
-.my-form input[type="text"], .my-form input[type="password"], .my-form textarea{
+.my-form input[type="text"] .my-form input[type="password"]{
   padding:8px;
   width:80%;
+}
+
+.my-form textarea{
+  border:none;
+  border-radius:10px;
+}
+
+.my-form label{
+  color:gray;
+  font-size:0.875em;
+}
+
+.my-form .dropdown{
+  text-align: center;
 }
 
 .button{
@@ -58,7 +71,34 @@ input {
   padding:10px 15px;
   border:none;
   border-radius: 5px;
+  color:white
 }
+
+.block{
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 40px 80px 40px 80px;
+  border-radius:10px;
+  background:snow;
+}
+
+.white-text{
+  color:white;
+}
+
+.form-control {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.form-control {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1;
+}
+
 
 /* IDs */
 #navbar{
@@ -89,6 +129,7 @@ input {
   border-radius:10px;
   margin-top:70px;
   margin-left:30px;
+  margin-bottom:50px;
   background:snow;
 }
 
@@ -99,16 +140,6 @@ input {
   height:350px;
   margin:185px 150px 20px 50px;
   box-sizing:border-box;
-  border-radius: 10px;
-  background:snow;
-}
-
-#signup{
-  width:30%;
-  padding:5px;
-  margin-top:50px;
-  margin-right:35%;
-  margin-left:35%;
   border-radius: 10px;
   background:snow;
 }

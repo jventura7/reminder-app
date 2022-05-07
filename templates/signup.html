@@ -9,17 +9,22 @@
         {% endif %}
     {% endwith %}
 
-<div id="signup">
+<div class="block">
     <h2 class="center">Sign Up</h2>
-    <form action="#" method="POST">
+    <form class="my-form" action="#" method="POST">
         <p><input type="text", name="first_name" placeholder="First Name"/></p>
         <p><input type="text", name="last_name" placeholder="Last Name"/></p>
         <p><input type="text", name="username" placeholder="Username"/></p>
         <p><input type="text", name="email" placeholder="Email"/></p>
-        <p><input type="text", name="password"/ placeholder="Password"></p>
+        <p><input type="password", name="password" placeholder="Password"></p>
+        <label for="relationship">Guardian/Dependant?</label>
+        <select name="relationship" id="relationship">
+            <option value="Guardian">Guardian</option>
+            <option value="Dependant">Dependant</option>
+        </select>
         <p><input class="button" type="submit", value="submit"/></p>
         <br>
-        <p class="center">Already have an account?<a href='login'> Login</a></p>
+        <p class="center">Already have an account?<a href='/'> Login</a></p>
     </form>
 </div>
 {% endblock %}
