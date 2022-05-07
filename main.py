@@ -12,8 +12,8 @@ guardian = mongo.db.guardians
 @app.route("/", methods = ['POST', 'GET'])
 def home():
     if request.method == "POST":
-        login_user = users.find_one ({"username": request.form["username"]})
-        login_guardian = guardian.find({"username": request.form["username"]})
+        login_user = users.find_one({"username": request.form["username"]})
+        login_guardian = guardian.find_one({"username": request.form["username"]})
         if login_user or login_guardian:
             if login_user:
                 login = login_user
