@@ -1,8 +1,16 @@
 #Author: Noah Sanzone
 
 import pika
+import json
 
 # incomming message: username (routing key), title, message, time reminder is set for
+
+def callback(ch, method, properties, body):
+    getQueue.method.message_count -= 1
+    print("%r:%r" % (method.routing_key, body))
+    #print("Message Count:", getQueue.method.message_count)
+    if getQueue.method.message_count == 0:
+        channel.stop_consuming()
 
 
 dict1 = {"username": "user1",
@@ -37,17 +45,28 @@ parameters = pika.ConnectionParameters(raspIP,
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
-action = "p"
+action = "c"
 warehouse = "FinalProject"
 collection = username
-dict = dict1
+dictionary = dict1
 
 if action == "p":
     channel.basic_publish(exchange=warehouse,
                           routing_key=collection,
-                          body=dict)
+                          body=json.dumps(dictionary))
+else:
+    getQueue = channel.queue_declare(queue=collection,
+                                     passive=True)
 
+    channel.queue_bind(exchange=warehouse,
+                       queue=collection,
+                       routing_key=collection)
 
+    channel.basic_consume(queue=collection,
+                          on_message_callback=callback,
+                          auto_ack=True)
+
+    channel.start_consuming()
 
 
 
