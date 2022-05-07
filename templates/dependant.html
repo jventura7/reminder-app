@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% block title %} User Page {% endblock %}
 {% block content%}
-    {% with messages = get_flashed_messages() %}
+    <h2 class="center white-text">Welcome Dependant {{username}}!</h2>
+    <div class="block">
+        {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for msg in messages %}
                 <p>{{msg}}</p>
             {% endfor %}
         {% endif %}
-    {% endwith %}
-    <h2 class="center white-text">
-        Welcome Dependant {{username}}!
-    </h2>
-    <div class="block">
+        {% endwith %}
+        <form action="#" class="my-form" method="POST">
+            <p><input type="text" name="guard_name" placeholder="Search for Guardian"></p>
+            <p><input class="button" type="submit", value="submit"/></p>
+        </form>
     </div>
 
 {% endblock %}

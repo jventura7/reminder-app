@@ -25,9 +25,23 @@ def home():
         return "Invalid username/password combination"
     return render_template("index.html")
 
-@app.route("/<nameID>/<relationshipType>")
+@app.route("/<nameID>/<relationshipType>", methods=['GET', 'POST'])
 def user(nameID, relationshipType):
     if relationshipType == "Dependant":
+        if request.method == "POST":
+            guardName = request.form["guard_name"]
+            findGuardian = guardian.find_one({"username": guardName})
+            findDependant = users.find_one({"username": nameID})
+            if guardName in findDependant["Guardians"]:
+                flash("Guardian already linked you silly goose!")
+            elif findGuardian:
+                guardian.update_one({"username": guardName}, 
+                                    {"$set": {"Dependants": findGuardian["Dependants"] + [nameID]}})
+                users.update_one({"username": nameID},
+                                 {"$set": {"Guardians": findDependant["Guardians"] + [guardName]}})    
+                flash("Successfully added guardian!")
+            else:
+                flash("Guardian doesn't exists, you dementia riddled dingus!")                
         return render_template("dependant.html", username=nameID)
     else:
         return render_template("guardian.html", username=nameID)
@@ -45,10 +59,18 @@ def signup():
 
         if not existingUserName and not existingUserEmail and not existingGuardianName and not existingGuardianEmail:
             hashpass = bcrypt.hashpw(request.form["password"].encode('utf-8'), bcrypt.gensalt())
-            currInfo = {"firstname": request.form["first_name"], "lastname": request.form["last_name"], "username": request.form["username"], "email": request.form["email"], "password" : hashpass, "relationship" : request.form["relationship"]}
+            currInfo = {"firstname": request.form["first_name"], 
+                        "lastname": request.form["last_name"], 
+                        "username": request.form["username"], 
+                        "email": request.form["email"], 
+                        "password" : hashpass, 
+                        "relationship" : request.form["relationship"]
+                        }
             if request.form["relationship"] == "Guardian":
+                currInfo["Dependants"] = []
                 guardian.insert_one(currInfo)
             else:
+                currInfo["Guardians"] = []
                 users.insert_one(currInfo)
             session["username"] = request.form["username"]
             return redirect(url_for("user", nameID=session["username"], relationshipType=currInfo["relationship"]))
