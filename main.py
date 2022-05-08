@@ -31,8 +31,8 @@ def home():
 @app.route("/<nameID>/<relationshipType>", methods=['GET', 'POST'])
 def user(nameID, relationshipType):
     # Establish RabbitMQ Connection
-    credentials = pika.PlainCredentials('guest', 'guest')
-    parameters = pika.ConnectionParameters('0.0.0.0',
+    credentials = pika.PlainCredentials('admin', 'password')
+    parameters = pika.ConnectionParameters('172.29.107.22',
                                             5672,
                                             '/',
                                             credentials)
@@ -62,12 +62,15 @@ def user(nameID, relationshipType):
             channel.queue_bind(exchange='FinalProject', 
                                queue=nameID, 
                                routing_key=nameID)
+            queueData = []
 
             for message in channel.consume(queue=nameID, inactivity_timeout=1):
                 if not message[2]:
                     break
                 method, properties, body = message
                 print(body)
+                queueData.append(json.loads(body.decode('utf-8')))
+            print(queueData)
                 
         return render_template("dependant.html", username=nameID)
     else:
