@@ -7,7 +7,7 @@ import json
 
 def callback(ch, method, properties, body):
     getQueue.method.message_count -= 1
-    print("%r:%r" % (method.routing_key, body))
+    print("%r:%r" % (method.routing_key, json.load(body)))
     #print("Message Count:", getQueue.method.message_count)
     if getQueue.method.message_count == 0:
         channel.stop_consuming()
