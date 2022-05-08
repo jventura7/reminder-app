@@ -49,8 +49,11 @@ def user(nameID, relationshipType):
     else:
         findGuardian = guardian.find_one({"username": nameID})
         if request.method == "POST":
-            dependant, title, urgency, description = request.form["dependants"], request.form["title"], request.form["urgency"], request.form["description"]
-            payload = {'title': title, 'urgency': urgency, 'description': description}
+            dependant, title, time, description = request.form["dependants"], request.form["title"], parse(request.form["meeting-time"]), request.form["description"]
+            payload = {'title': title, 'Time': time, 'description': description}
+            print("_________________________")
+            print(payload["Time"])
+            print("_________________________")
 
             # Establish RabbitMQ Connection
             credentials = pika.PlainCredentials('guest', 'guest')
@@ -101,6 +104,11 @@ def signup():
             return redirect(url_for("user", nameID=session["username"], relationshipType=currInfo["relationship"]))
         return "email or username is already registered"
     return render_template("signup.html")
+
+def parse(schedule):
+    year, month, day = schedule[:4], schedule[5:7], schedule[8:10]
+    hour, minute = schedule[11:13], schedule[14:]
+    return f"{year}-{month}-{day} {hour}:{minute}"
 
 if __name__ == "__main__":
     # db.create_all()
