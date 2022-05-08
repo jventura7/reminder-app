@@ -3,6 +3,9 @@ from flask import Flask, redirect, url_for, render_template, request, session, f
 from datetime import timedelta
 from flask_pymongo import PyMongo
 import bcrypt
+import pika
+import json
+
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/accounts"
 
@@ -45,6 +48,27 @@ def user(nameID, relationshipType):
         return render_template("dependant.html", username=nameID)
     else:
         findGuardian = guardian.find_one({"username": nameID})
+        if request.method == "POST":
+            dependant, title, urgency, description = request.form["dependants"], request.form["title"], request.form["urgency"], request.form["description"]
+            payload = {'title': title, 'urgency': urgency, 'description': description}
+
+            # Establish RabbitMQ Connection
+            credentials = pika.PlainCredentials('guest', 'guest')
+            parameters = pika.ConnectionParameters('0.0.0.0',
+                                                    5672,
+                                                    '/',
+                                                    credentials)
+
+            connection = pika.BlockingConnection(parameters)
+            channel = connection.channel()
+
+            # Create new queue with dependant name
+            channel.queue_declare(queue=dependant, durable=True)
+            channel.queue_bind(queue=dependant, exchange='FinalProject', routing_key=dependant)
+
+            # Send reminder to queue
+            channel.basic_publish(exchange='FinalProject', routing_key=dependant, body=json.dumps(payload))
+            
         return render_template("guardian.html", username=nameID, dList=findGuardian["Dependants"])
 
 @app.route("/signup", methods = ['GET', 'POST'])
