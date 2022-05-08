@@ -30,6 +30,16 @@ def home():
 
 @app.route("/<nameID>/<relationshipType>", methods=['GET', 'POST'])
 def user(nameID, relationshipType):
+    # Establish RabbitMQ Connection
+    credentials = pika.PlainCredentials('guest', 'guest')
+    parameters = pika.ConnectionParameters('0.0.0.0',
+                                            5672,
+                                            '/',
+                                            credentials)
+
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+
     if relationshipType == "Dependant":
         if request.method == "POST":
             guardName = request.form["guard_name"]
@@ -44,26 +54,27 @@ def user(nameID, relationshipType):
                                  {"$set": {"Guardians": findDependant["Guardians"] + [guardName]}})    
                 flash("Successfully added guardian!")
             else:
-                flash("Guardian doesn't exist!")                
+                flash("Guardian doesn't exist!")
+        elif request.method == "GET":
+            # Begin RabbitMQ Consume
+            getQueue = channel.queue_declare(queue=nameID, passive=True)
+
+            channel.queue_bind(exchange='FinalProject', 
+                               queue=nameID, 
+                               routing_key=nameID)
+
+            for message in channel.consume(queue=nameID, inactivity_timeout=1):
+                if not message[2]:
+                    break
+                method, properties, body = message
+                print(body)
+                
         return render_template("dependant.html", username=nameID)
     else:
         findGuardian = guardian.find_one({"username": nameID})
         if request.method == "POST":
             dependant, title, time, description = request.form["dependants"], request.form["title"], parse(request.form["meeting-time"]), request.form["description"]
-            payload = {'title': title, 'Time': time, 'description': description}
-            print("_________________________")
-            print(payload["Time"])
-            print("_________________________")
-
-            # Establish RabbitMQ Connection
-            credentials = pika.PlainCredentials('guest', 'guest')
-            parameters = pika.ConnectionParameters('0.0.0.0',
-                                                    5672,
-                                                    '/',
-                                                    credentials)
-
-            connection = pika.BlockingConnection(parameters)
-            channel = connection.channel()
+            payload = {'title': title, 'time': time, 'description': description}
 
             # Create new queue with dependant name
             channel.queue_declare(queue=dependant, durable=True)
@@ -111,6 +122,5 @@ def parse(schedule):
     return f"{year}-{month}-{day} {hour}:{minute}"
 
 if __name__ == "__main__":
-    # db.create_all()
     app.secret_key = "my_secret"
     app.run(debug=True)
