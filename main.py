@@ -33,7 +33,7 @@ def user(nameID, relationshipType):
             findGuardian = guardian.find_one({"username": guardName})
             findDependant = users.find_one({"username": nameID})
             if guardName in findDependant["Guardians"]:
-                flash("Guardian already linked you silly goose!")
+                flash("Guardian already linked!")
             elif findGuardian:
                 guardian.update_one({"username": guardName}, 
                                     {"$set": {"Dependants": findGuardian["Dependants"] + [nameID]}})
@@ -41,10 +41,11 @@ def user(nameID, relationshipType):
                                  {"$set": {"Guardians": findDependant["Guardians"] + [guardName]}})    
                 flash("Successfully added guardian!")
             else:
-                flash("Guardian doesn't exists, you dementia riddled dingus!")                
+                flash("Guardian doesn't exist!")                
         return render_template("dependant.html", username=nameID)
     else:
-        return render_template("guardian.html", username=nameID)
+        findGuardian = guardian.find_one({"username": nameID})
+        return render_template("guardian.html", username=nameID, dList=findGuardian["Dependants"])
 
 @app.route("/signup", methods = ['GET', 'POST'])
 def signup():

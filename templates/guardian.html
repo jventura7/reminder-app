@@ -1,33 +1,69 @@
-{% extends "base.html" %}
-{% block title %} User Page {% endblock %}
-{% block content%}
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for msg in messages %}
-                <p>{{msg}}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    <h2 class="center white-text">
-        Welcome Guardian {{username}}!
-    </h2>
-    <div class="block">
-        <form class="my-form" action="#" method="POST">
-            <p><input type="text" placeholder="Title of Reminder"></p>
-            <div class="dropdown">
-                <label for="urgency">Select an urgency rating:</label>
-                <select name="urgency" id="urgency">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-            </div>
-            <br>
-            <textarea name="reminder_desc" id="reminder_desc" cols="30" rows="10" placeholder="Description of Reminder"></textarea>
-            <p><input class="button" type="submit", value="submit"/></p>
-        </form>
-    </div>
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type = "text/css" href="{{ url_for('static', filename='styles/style.css')}}">
+        <title>Guardian</title>
+        <script type="text/javascript">
+            function createDependantOptions(){
+                var dOptions = "";
+                dependants = {{dList|tojson}};
+                for (var i = 0; i < dependants.length; i++){
+                    dOptions += "<option value='"+dependants[i]+"'>"+dependants[i]+"</option>";
+                }
+                document.getElementById('dependants').innerHTML = dOptions;
+            }
+        </script>
+    </head>   
 
-{% endblock %}
+    <body onload="createDependantOptions()">
+        <nav id="navbar">
+          <div class="container">
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/signup">Sign up</a></li>
+              <li><a href="#">Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+          
+        <div class="container-fluid">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for msg in messages %}
+                        <p>{{msg}}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <h2 class="center white-text">
+                Welcome Guardian {{username}}!
+            </h2>
+            <div class="block">
+                <form class="my-form" action="#" method="POST">
+                    <div class="dropdown">
+                        <label for="choose_dep">Choose a dependant</label>
+                        <select name="dependants" id="dependants">
+                        </select>
+                    </div>
+                    <p><input type="text" placeholder="Title of Reminder"></p>
+                    <div class="dropdown">
+                        <label for="urgency">Select an urgency rating:</label>
+                        <select name="urgency" id="urgency">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <br>
+                    <textarea name="reminder_desc" id="reminder_desc" cols="30" rows="10" placeholder="Description of Reminder"></textarea>
+                    <p><input class="button" type="submit", value="submit"/></p>
+                </form>
+            </div>
+        </div>
+
+        <footer id="main-footer">
+          <p>Copyright &copy; 2022 A JKN Production</p>
+      </footer>
+    </body>
+</html>
