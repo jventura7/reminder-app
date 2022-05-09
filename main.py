@@ -41,7 +41,7 @@ def user(nameID, relationshipType):
     channel = connection.channel()
 
     if relationshipType == "Dependant":
-        if request.method == "POST":
+        if request.method == "POST" and request.form["guard_name"]:
             guardName = request.form["guard_name"]
             findGuardian = guardian.find_one({"username": guardName})
             findDependant = users.find_one({"username": nameID})
@@ -55,6 +55,13 @@ def user(nameID, relationshipType):
                 flash("Successfully added guardian!")
             else:
                 flash("Guardian doesn't exist!")
+        elif request.method == "POST" and request.form["INSERTHERE"]:
+            '''
+            channel.basic_publish(exchange="FinalProject"
+                                  routing_key=nameID)
+                                  body=json.dumps(#data))
+            '''
+
         elif request.method == "GET":
             # Begin RabbitMQ Consume
             getQueue = channel.queue_declare(queue=nameID, passive=True)
@@ -62,15 +69,18 @@ def user(nameID, relationshipType):
             channel.queue_bind(exchange='FinalProject', 
                                queue=nameID, 
                                routing_key=nameID)
-            queueData = []
-
+            tempQueue = []
             for message in channel.consume(queue=nameID, inactivity_timeout=1):
                 if not message[2]:
                     break
                 method, properties, body = message
-                print(body)
-                queueData.append(json.loads(body.decode('utf-8')))
-            print(queueData)
+                channel.basic_ack(method.delivery_tag)
+            for data in tempQueue:
+                tempQueue.append(json.loads(body.decode('utf-8')))
+
+            #channel.queue_bind(exchange="FinalProject", queue=nameID, routing_key=nameID)
+
+            #channel.basic_publish(exchange='FinalProject', routing_key=dependant, body=json.dumps(payload))
                 
         return render_template("dependant.html", username=nameID)
     else:
