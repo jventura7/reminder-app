@@ -81,6 +81,7 @@ def user(nameID, relationshipType):
             #channel.queue_bind(exchange="FinalProject", queue=nameID, routing_key=nameID)
 
             #channel.basic_publish(exchange='FinalProject', routing_key=dependant, body=json.dumps(payload))
+            return render_template("dependant.html", username=nameID, reminders=tempQueue)
                 
         return render_template("dependant.html", username=nameID)
     else:

@@ -15,5 +15,18 @@
             <p><input class="button" type="submit", value="submit"/></p>
         </form>
     </div>
-
+    <br>
+    <div class="block">
+        <h2>Current Reminders</h2>
+        <form action="#" method="POST">
+            {% for i in range(reminders | length) %}
+                <input type="checkbox" name="reminder" + {{i}} value="reminder" + {{i}}>
+                <label for="reminder" + {{i}}>{{reminders[i]['title']}}</label>
+                <h5 class="center"> {{reminders[i]['time']}}</h5>
+                <h5> {{reminders[i]['description']}} </h6>
+                <br>
+            {% endfor %}
+            <p><input class="button" type="submit", value="submit"/></p>
+        </form>
+    </div>
 {% endblock %}
